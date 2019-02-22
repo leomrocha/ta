@@ -6,8 +6,13 @@
 .. moduleauthor:: Dario Lopez Padial (Bukosabino)
 
 """
-import pandas as pd
+# import pandas as p
+
 import numpy as np
+# for compilation to native code
+from numba import jit, njit, vectorize, jitclass
+from numba import int32, float32    # import the types
+
 
 from .utils import *
 
@@ -23,12 +28,12 @@ def rsi(close, n=14, fillna=False):
     https://www.investopedia.com/terms/r/rsi.asp
 
     Args:
-        close(pandas.Series): dataset 'Close' column.
+        close([np.float32] ): 'Close'
         n(int): n period.
-        fillna(bool): if True, fill nan values.
+        fillna(bool): if True, fill nan  (None or empty) values.
 
     Returns:
-        pandas.Series: New feature generated.
+        [np.float32]: New feature generated.
     """
     diff = close.diff()
     which_dn = diff < 0
@@ -169,6 +174,7 @@ def uo(high, low, close, s=7, m=14, l=28, ws=4.0, wm=2.0, wl=1.0, fillna=False):
     if fillna:
         uo = uo.replace([np.inf, -np.inf], np.nan).fillna(50)
     return pd.Series(uo, name='uo')
+
 
 def stoch(high, low, close, n=14, fillna=False):
     """Stochastic Oscillator

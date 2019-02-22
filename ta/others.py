@@ -7,7 +7,7 @@
 
 """
 import numpy as np
-import pandas as pd
+# import pandas as pd
 
 
 def daily_return(close, fillna=False):

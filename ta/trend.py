@@ -6,7 +6,7 @@
 .. moduleauthor:: Dario Lopez Padial (Bukosabino)
 
 """
-import pandas as pd
+# import pandas as pd
 import numpy as np
 
 from .utils import *
