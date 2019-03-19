@@ -38,12 +38,13 @@ def average_true_range(high, low, close, n=14, fillna=False):
     for i in range(1, len(atr)):
         atr[i] = (atr[i-1] * (n-1) + tr.iloc[i]) / float(n)
 
-    atr = pd.Series(data=atr, index=tr.index)
-
-    if fillna:
-        atr = atr.replace([np.inf, -np.inf], np.nan).fillna(0)
-
-    return pd.Series(atr, name='atr')
+    return atr
+    # atr = pd.Series(data=atr, index=tr.index)
+    #
+    # if fillna:
+    #     atr = atr.replace([np.inf, -np.inf], np.nan).fillna(0)
+    #
+    # return pd.Series(atr, name='atr')
 
 
 def bollinger_mavg(close, n=20, fillna=False):
@@ -61,9 +62,10 @@ def bollinger_mavg(close, n=20, fillna=False):
         pandas.Series: New feature generated.
     """
     mavg = close.rolling(n).mean()
-    if fillna:
-        mavg = mavg.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
-    return pd.Series(mavg, name='mavg')
+    return mavg
+    # if fillna:
+    #     mavg = mavg.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
+    # return pd.Series(mavg, name='mavg')
 
 
 def bollinger_hband(close, n=20, ndev=2, fillna=False):
@@ -85,9 +87,11 @@ def bollinger_hband(close, n=20, ndev=2, fillna=False):
     mavg = close.rolling(n).mean()
     mstd = close.rolling(n).std()
     hband = mavg + ndev*mstd
-    if fillna:
-        hband = hband.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
-    return pd.Series(hband, name='hband')
+
+    return hband
+    # if fillna:
+    #     hband = hband.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
+    # return pd.Series(hband, name='hband')
 
 
 def bollinger_lband(close, n=20, ndev=2, fillna=False):
@@ -109,9 +113,11 @@ def bollinger_lband(close, n=20, ndev=2, fillna=False):
     mavg = close.rolling(n).mean()
     mstd = close.rolling(n).std()
     lband = mavg - ndev * mstd
-    if fillna:
-        lband = lband.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
-    return pd.Series(lband, name='lband')
+
+    return lband
+    # if fillna:
+    #     lband = lband.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
+    # return pd.Series(lband, name='lband')
 
 
 def bollinger_hband_indicator(close, n=20, ndev=2, fillna=False):
@@ -186,9 +192,10 @@ def keltner_channel_central(high, low, close, n=10, fillna=False):
     """
     tp = (high + low + close) / 3.0
     tp = tp.rolling(n).mean()
-    if fillna:
-        tp = tp.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
-    return pd.Series(tp, name='kc_central')
+    return tp
+    # if fillna:
+    #     tp = tp.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
+    # return pd.Series(tp, name='kc_central')
 
 
 def keltner_channel_hband(high, low, close, n=10, fillna=False):
@@ -209,9 +216,10 @@ def keltner_channel_hband(high, low, close, n=10, fillna=False):
     """
     tp = ((4 * high) - (2 * low) + close) / 3.0
     tp = tp.rolling(n).mean()
-    if fillna:
-        tp = tp.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
-    return pd.Series(tp, name='kc_hband')
+    return tp
+    # if fillna:
+    #     tp = tp.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
+    # return pd.Series(tp, name='kc_hband')
 
 
 def keltner_channel_lband(high, low, close, n=10, fillna=False):
@@ -232,9 +240,10 @@ def keltner_channel_lband(high, low, close, n=10, fillna=False):
     """
     tp = ((-2 * high) + (4 * low) + close) / 3.0
     tp = tp.rolling(n).mean()
-    if fillna:
-        tp = tp.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
-    return pd.Series(tp, name='kc_lband')
+    return tp
+    # if fillna:
+    #     tp = tp.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
+    # return pd.Series(tp, name='kc_lband')
 
 
 def keltner_channel_hband_indicator(high, low, close, n=10, fillna=False):

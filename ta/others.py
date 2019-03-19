@@ -22,9 +22,10 @@ def daily_return(close, fillna=False):
     """
     dr = (close / close.shift(1)) - 1
     dr *= 100
-    if fillna:
-        dr = dr.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(dr, name='d_ret')
+    return dr
+    # if fillna:
+    #     dr = dr.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # return pd.Series(dr, name='d_ret')
 
 
 def daily_log_return(close, fillna=False):
@@ -41,9 +42,10 @@ def daily_log_return(close, fillna=False):
     """
     dr = np.log(close).diff()
     dr *= 100
-    if fillna:
-        dr = dr.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(dr, name='d_logret')
+    return dr
+    # if fillna:
+    #     dr = dr.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # return pd.Series(dr, name='d_logret')
 
 
 def cumulative_return(close, fillna=False):
@@ -58,6 +60,7 @@ def cumulative_return(close, fillna=False):
     """
     cr = (close / close.iloc[0]) - 1
     cr *= 100
-    if fillna:
-        cr = cr.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
-    return pd.Series(cr, name='cum_ret')
+    return cr
+    # if fillna:
+    #     cr = cr.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
+    # return pd.Series(cr, name='cum_ret')

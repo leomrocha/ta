@@ -32,9 +32,11 @@ def acc_dist_index(high, low, close, volume, fillna=False):
     clv = clv.fillna(0.0) # float division by zero
     ad = clv * volume
     ad = ad + ad.shift(1)
-    if fillna:
-        ad = ad.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(ad, name='adi')
+
+    return ad
+    # if fillna:
+    #     ad = ad.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # return pd.Series(ad, name='adi')
 
 
 def on_balance_volume(close, volume, fillna=False):
@@ -119,9 +121,11 @@ def chaikin_money_flow(high, low, close, volume, n=20, fillna=False):
     mfv = mfv.fillna(0.0) # float division by zero
     mfv *= volume
     cmf = mfv.rolling(n).sum() / volume.rolling(n).sum()
-    if fillna:
-        cmf = cmf.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(cmf, name='cmf')
+
+    return cmf
+    # if fillna:
+    #     cmf = cmf.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # return pd.Series(cmf, name='cmf')
 
 
 def force_index(close, volume, n=2, fillna=False):
@@ -143,9 +147,10 @@ def force_index(close, volume, n=2, fillna=False):
         pandas.Series: New feature generated.
     """
     fi = close.diff(n) * volume.diff(n)
-    if fillna:
-        fi = fi.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(fi, name='fi_'+str(n))
+    return fi
+    # if fillna:
+    #     fi = fi.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # return pd.Series(fi, name='fi_'+str(n))
 
 
 def ease_of_movement(high, low, close, volume, n=20, fillna=False):
@@ -169,9 +174,10 @@ def ease_of_movement(high, low, close, volume, n=20, fillna=False):
     """
     emv = (high.diff(1) + low.diff(1)) * (high - low) / (2 * volume)
     emv = emv.rolling(n).mean()
-    if fillna:
-        emv = emv.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(emv, name='eom_' + str(n))
+    return emv
+    # if fillna:
+    #     emv = emv.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # return pd.Series(emv, name='eom_' + str(n))
 
 
 def volume_price_trend(close, volume, fillna=False):
@@ -194,9 +200,10 @@ def volume_price_trend(close, volume, fillna=False):
     """
     vpt = volume * ((close - close.shift(1)) / close.shift(1))
     vpt = vpt.shift(1) + vpt
-    if fillna:
-        vpt = vpt.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(vpt, name='vpt')
+    return vpt
+    # if fillna:
+    #     vpt = vpt.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # return pd.Series(vpt, name='vpt')
 
 
 def negative_volume_index(close, volume, fillna=False):

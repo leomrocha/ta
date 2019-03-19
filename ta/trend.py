@@ -29,12 +29,12 @@ def macd(close, n_fast=12, n_slow=26, fillna=False):
     Returns:
         pandas.Series: New feature generated.
     """
-    emafast = ema(close, n_fast, fillna)
-    emaslow = ema(close, n_slow, fillna)
+    emafast = ewma(close, n_fast, fillna)
+    emaslow = ewma(close, n_slow, fillna)
     macd = emafast - emaslow
     if fillna:
         macd = macd.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(macd, name='MACD_%d_%d' % (n_fast, n_slow))
+    return macd  # pd.Series(macd, name='MACD_%d_%d' % (n_fast, n_slow))
 
 
 def macd_signal(close, n_fast=12, n_slow=26, n_sign=9, fillna=False):
@@ -54,13 +54,13 @@ def macd_signal(close, n_fast=12, n_slow=26, n_sign=9, fillna=False):
     Returns:
         pandas.Series: New feature generated.
     """
-    emafast = ema(close, n_fast, fillna)
-    emaslow = ema(close, n_slow, fillna)
+    emafast = ewma(close, n_fast, fillna)
+    emaslow = ewma(close, n_slow, fillna)
     macd = emafast - emaslow
-    macd_signal = ema(macd, n_sign, fillna)
+    macd_signal = ewma(macd, n_sign, fillna)
     if fillna:
         macd_signal = macd_signal.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(macd_signal, name='MACD_sign')
+    return macd_signal  # .Series(macd_signal, name='MACD_sign')
 
 
 def macd_diff(close, n_fast=12, n_slow=26, n_sign=9, fillna=False):
@@ -80,14 +80,14 @@ def macd_diff(close, n_fast=12, n_slow=26, n_sign=9, fillna=False):
     Returns:
         pandas.Series: New feature generated.
     """
-    emafast = ema(close, n_fast, fillna)
-    emaslow = ema(close, n_slow, fillna)
+    emafast = ewma(close, n_fast, fillna)
+    emaslow = ewma(close, n_slow, fillna)
     macd = emafast - emaslow
-    macdsign = ema(macd, n_sign, fillna)
+    macdsign = ewma(macd, n_sign, fillna)
     macd_diff = macd - macdsign
     if fillna:
         macd_diff = macd_diff.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(macd_diff, name='MACD_diff')
+    return macd_diff  # pd.Series(macd_diff, name='MACD_diff')
 
 
 def ema_indicator(close, n=12, fillna=False):
@@ -103,8 +103,9 @@ def ema_indicator(close, n=12, fillna=False):
     Returns:
         pandas.Series: New feature generated.
     """
-    ema_ = ema(close, n, fillna)
-    return pd.Series(ema_, name='ema')
+    return ewma(close,n, fillna)
+    # ema_ = ema(close, n, fillna)
+    # return pd.Series(ema_, name='ema')
 
 
 def adx(high, low, close, n=14, fillna=False):
@@ -182,11 +183,11 @@ def adx(high, low, close, n=14, fillna=False):
         adx[i] = ((adx[i-1] * (n - 1)) + dx[i-1]) / float(n)
 
     adx = np.concatenate((trs_initial, adx), axis=0)
-    adx = pd.Series(data=adx, index=close.index)
-
-    if fillna:
-        adx = adx.replace([np.inf, -np.inf], np.nan).fillna(20)
-    return pd.Series(adx, name='adx')
+    # adx = pd.Series(data=adx, index=close.index)
+    return adx
+    # if fillna:
+    #     adx = adx.replace([np.inf, -np.inf], np.nan).fillna(20)
+    # return pd.Series(adx, name='adx')
 
 
 def adx_pos(high, low, close, n=14, fillna=False):
@@ -244,11 +245,12 @@ def adx_pos(high, low, close, n=14, fillna=False):
     for i in range(1, len(trs)-1):
         dip[i+n] = 100 * (dip_mio[i]/trs[i])
 
-    dip = pd.Series(data=dip, index=close.index)
-
-    if fillna:
-        dip = dip.replace([np.inf, -np.inf], np.nan).fillna(20)
-    return pd.Series(dip, name='adx_pos')
+    return dip
+    # dip = pd.Series(data=dip, index=close.index)
+    #
+    # if fillna:
+    #     dip = dip.replace([np.inf, -np.inf], np.nan).fillna(20)
+    # return pd.Series(dip, name='adx_pos')
 
 
 def adx_neg(high, low, close, n=14, fillna=False):
@@ -306,11 +308,12 @@ def adx_neg(high, low, close, n=14, fillna=False):
     for i in range(1, len(trs)-1):
         din[i+n] = 100 * (din_mio[i]/float(trs[i]))
 
-    din = pd.Series(data=din, index=close.index)
-
-    if fillna:
-        din = din.replace([np.inf, -np.inf], np.nan).fillna(20)
-    return pd.Series(din, name='adx_neg')
+    return din
+    # din = pd.Series(data=din, index=close.index)
+    #
+    # if fillna:
+    #     din = din.replace([np.inf, -np.inf], np.nan).fillna(20)
+    # return pd.Series(din, name='adx_neg')
 
 
 def vortex_indicator_pos(high, low, close, n=14, fillna=False):
@@ -339,9 +342,11 @@ def vortex_indicator_pos(high, low, close, n=14, fillna=False):
     vmm = np.abs(low - high.shift(1))
 
     vip = vmp.rolling(n).sum() / trn
-    if fillna:
-        vip = vip.replace([np.inf, -np.inf], np.nan).fillna(1)
-    return pd.Series(vip, name='vip')
+
+    return vip
+    # if fillna:
+    #     vip = vip.replace([np.inf, -np.inf], np.nan).fillna(1)
+    # return pd.Series(vip, name='vip')
 
 
 def vortex_indicator_neg(high, low, close, n=14, fillna=False):
@@ -370,9 +375,12 @@ def vortex_indicator_neg(high, low, close, n=14, fillna=False):
     vmm = np.abs(low - high.shift(1))
 
     vin = vmm.rolling(n).sum() / trn
-    if fillna:
-        vin = vin.replace([np.inf, -np.inf], np.nan).fillna(1)
-    return pd.Series(vin, name='vin')
+
+    return vin
+    #
+    # if fillna:
+    #     vin = vin.replace([np.inf, -np.inf], np.nan).fillna(1)
+    # return pd.Series(vin, name='vin')
 
 
 def trix(close, n=15, fillna=False):
@@ -391,14 +399,16 @@ def trix(close, n=15, fillna=False):
     Returns:
         pandas.Series: New feature generated.
     """
-    ema1 = ema(close, n, fillna)
-    ema2 = ema(ema1, n, fillna)
-    ema3 = ema(ema2, n, fillna)
+    ema1 = ewma(close, n, fillna)
+    ema2 = ewma(ema1, n, fillna)
+    ema3 = ewma(ema2, n, fillna)
     trix = (ema3 - ema3.shift(1)) / ema3.shift(1)
     trix *= 100
-    if fillna:
-        trix = trix.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(trix, name='trix_'+str(n))
+
+    return trix
+    # if fillna:
+    #     trix = trix.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # return pd.Series(trix, name='trix_'+str(n))
 
 
 def mass_index(high, low, n=9, n2=25, fillna=False):
@@ -422,13 +432,15 @@ def mass_index(high, low, n=9, n2=25, fillna=False):
 
     """
     amplitude = high - low
-    ema1 = ema(amplitude, n, fillna)
-    ema2 = ema(ema1, n, fillna)
+    ema1 = ewma(amplitude, n, fillna)
+    ema2 = ewma(ema1, n, fillna)
     mass = ema1 / ema2
     mass = mass.rolling(n2).sum()
-    if fillna:
-        mass = mass.replace([np.inf, -np.inf], np.nan).fillna(n2)
-    return pd.Series(mass, name='mass_index_'+str(n))
+
+    return mass
+    # if fillna:
+    #     mass = mass.replace([np.inf, -np.inf], np.nan).fillna(n2)
+    # return pd.Series(mass, name='mass_index_'+str(n))
 
 
 def cci(high, low, close, n=20, c=0.015, fillna=False):
@@ -456,9 +468,11 @@ def cci(high, low, close, n=20, c=0.015, fillna=False):
     """
     pp = (high + low + close) / 3.0
     cci = (pp - pp.rolling(n).mean()) / (c * pp.rolling(n).std())
-    if fillna:
-        cci = cci.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(cci, name='cci')
+
+    return cci
+    # if fillna:
+    #     cci = cci.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # return pd.Series(cci, name='cci')
 
 
 def dpo(close, n=20, fillna=False):
@@ -478,9 +492,11 @@ def dpo(close, n=20, fillna=False):
         pandas.Series: New feature generated.
     """
     dpo = close.shift(int((0.5 * n) + 1)) - close.rolling(n).mean()
-    if fillna:
-        dpo = dpo.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(dpo, name='dpo_'+str(n))
+
+    return dpo
+    # if fillna:
+    #     dpo = dpo.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # return pd.Series(dpo, name='dpo_'+str(n))
 
 
 def kst(close, r1=10, r2=15, r3=20, r4=30, n1=10, n2=10, n3=10, n4=15, fillna=False):
@@ -513,9 +529,11 @@ def kst(close, r1=10, r2=15, r3=20, r4=30, n1=10, n2=10, n3=10, n4=15, fillna=Fa
     rocma3 = ((close - close.shift(r3)) / close.shift(r3)).rolling(n3).mean()
     rocma4 = ((close - close.shift(r4)) / close.shift(r4)).rolling(n4).mean()
     kst = 100 * (rocma1 + 2 * rocma2 + 3 * rocma3 + 4 * rocma4)
-    if fillna:
-        kst = kst.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(kst, name='kst')
+
+    return kst
+    # if fillna:
+    #     kst = kst.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # return pd.Series(kst, name='kst')
 
 
 def kst_sig(close, r1=10, r2=15, r3=20, r4=30, n1=10, n2=10, n3=10, n4=15, nsig=9, fillna=False):
@@ -550,9 +568,11 @@ def kst_sig(close, r1=10, r2=15, r3=20, r4=30, n1=10, n2=10, n3=10, n4=15, nsig=
     rocma4 = ((close - close.shift(r4)) / close.shift(r4)).rolling(n4).mean()
     kst = 100 * (rocma1 + 2 * rocma2 + 3 * rocma3 + 4 * rocma4)
     kst_sig = kst.rolling(nsig).mean()
-    if fillna:
-        kst_sig = kst_sig.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(kst_sig, name='kst_sig')
+
+    return kst_sig
+    # if fillna:
+    #     kst_sig = kst_sig.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # return pd.Series(kst_sig, name='kst_sig')
 
 
 def ichimoku_a(high, low, n1=9, n2=26, visual=False, fillna=False):
@@ -580,10 +600,11 @@ def ichimoku_a(high, low, n1=9, n2=26, visual=False, fillna=False):
     if visual:
         spana = spana.shift(n2)
 
-    if fillna:
-        spana = spana.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
-
-    return pd.Series(spana, name='ichimoku_a_'+str(n2))
+    return spana
+    # if fillna:
+    #     spana = spana.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
+    #
+    # return pd.Series(spana, name='ichimoku_a_'+str(n2))
 
 
 def ichimoku_b(high, low, n2=26, n3=52, visual=False, fillna=False):
@@ -608,10 +629,11 @@ def ichimoku_b(high, low, n2=26, n3=52, visual=False, fillna=False):
     if visual:
         spanb = spanb.shift(n2)
 
-    if fillna:
-        spanb = spanb.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
-
-    return pd.Series(spanb, name='ichimoku_b_'+str(n2))
+    return spanb
+    # if fillna:
+    #     spanb = spanb.replace([np.inf, -np.inf], np.nan).fillna(method='backfill')
+    #
+    # return pd.Series(spanb, name='ichimoku_b_'+str(n2))
 
 
 def aroon_up(close, n=25, fillna=False):
@@ -632,9 +654,11 @@ def aroon_up(close, n=25, fillna=False):
 
     """
     aroon_up = close.rolling(n).apply(lambda x: float(np.argmax(x) + 1) / n * 100)
-    if fillna:
-        aroon_up = aroon_up.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(aroon_up, name='aroon_up'+str(n))
+
+    return aroon_up
+    # if fillna:
+    #     aroon_up = aroon_up.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # return pd.Series(aroon_up, name='aroon_up'+str(n))
 
 
 def aroon_down(close, n=25, fillna=False):
@@ -654,6 +678,7 @@ def aroon_down(close, n=25, fillna=False):
         pandas.Series: New feature generated.
     """
     aroon_down = close.rolling(n).apply(lambda x: float(np.argmin(x) + 1) / n * 100)
-    if fillna:
-        aroon_down = aroon_down.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(aroon_down, name='aroon_down'+str(n))
+    return aroon_down
+    # if fillna:
+    #     aroon_down = aroon_down.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # return pd.Series(aroon_down, name='aroon_down'+str(n))

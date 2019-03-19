@@ -41,13 +41,16 @@ def rsi(close, n=14, fillna=False):
     up, dn = diff, diff*0
     up[which_dn], dn[which_dn] = 0, -up[which_dn]
 
-    emaup = ema(up, n, fillna)
-    emadn = ema(dn, n, fillna)
+    emaup = ewma(up, n, fillna)
+    emadn = ewma(dn, n, fillna)
 
     rsi = 100 * emaup / (emaup + emadn)
-    if fillna:
-        rsi = rsi.replace([np.inf, -np.inf], np.nan).fillna(50)
-    return pd.Series(rsi, name='rsi')
+
+    return rsi
+
+    # if fillna:
+    #     rsi = rsi.replace([np.inf, -np.inf], np.nan).fillna(50)
+    # return pd.Series(rsi, name='rsi')
 
 
 def money_flow_index(high, low, close, volume, n=14, fillna=False):
@@ -124,9 +127,13 @@ def tsi(close, r=25, s=13, fillna=False):
     m2 = abs(m).ewm(r).mean().ewm(s).mean()
     tsi = m1 / m2
     tsi *= 100
-    if fillna:
-        tsi = tsi.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(tsi, name='tsi')
+
+    return tsi
+
+    # if fillna:
+    #     tsi = tsi.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # return pd.Series(tsi, name='tsi')
+
 
 def uo(high, low, close, s=7, m=14, l=28, ws=4.0, wm=2.0, wl=1.0, fillna=False):
     """Ultimate Oscillator
@@ -171,9 +178,11 @@ def uo(high, low, close, s=7, m=14, l=28, ws=4.0, wm=2.0, wl=1.0, fillna=False):
     avg_l = bp.rolling(l).sum() / tr.rolling(l).sum()
 
     uo = 100.0 * ((ws * avg_s) + (wm * avg_m) + (wl * avg_l)) / (ws + wm + wl)
-    if fillna:
-        uo = uo.replace([np.inf, -np.inf], np.nan).fillna(50)
-    return pd.Series(uo, name='uo')
+
+    return uo
+    # if fillna:
+    #     uo = uo.replace([np.inf, -np.inf], np.nan).fillna(50)
+    # return pd.Series(uo, name='uo')
 
 
 def stoch(high, low, close, n=14, fillna=False):
@@ -199,10 +208,11 @@ def stoch(high, low, close, n=14, fillna=False):
     smin = low.rolling(n).min()
     smax = high.rolling(n).max()
     stoch_k = 100 * (close - smin) / (smax - smin)
+    return stoch_k
+    # if fillna:
+    #     stoch_k = stoch_k.replace([np.inf, -np.inf], np.nan).fillna(50)
+    # return pd.Series(stoch_k, name='stoch_k')
 
-    if fillna:
-        stoch_k = stoch_k.replace([np.inf, -np.inf], np.nan).fillna(50)
-    return pd.Series(stoch_k, name='stoch_k')
 
 def stoch_signal(high, low, close, n=14, d_n=3, fillna=False):
     """Stochastic Oscillator Signal
@@ -224,10 +234,11 @@ def stoch_signal(high, low, close, n=14, d_n=3, fillna=False):
     """
     stoch_k = stoch(high, low, close, n, fillna=fillna)
     stoch_d = stoch_k.rolling(d_n).mean()
+    return stoch_d
 
-    if fillna:
-        stoch_d = stoch_d.replace([np.inf, -np.inf], np.nan).fillna(50)
-    return pd.Series(stoch_d, name='stoch_d')
+    # if fillna:
+    #     stoch_d = stoch_d.replace([np.inf, -np.inf], np.nan).fillna(50)
+    # return pd.Series(stoch_d, name='stoch_d')
 
 
 def wr(high, low, close, lbp=14, fillna=False):
@@ -269,17 +280,19 @@ def wr(high, low, close, lbp=14, fillna=False):
         pandas.Series: New feature generated.
     """
 
-    hh = high.rolling(lbp).max() #highest high over lookback period lbp
-    ll = low.rolling(lbp).min()  #lowest low over lookback period lbp
+    hh = high.rolling(lbp).max()  # highest high over lookback period lbp
+    ll = low.rolling(lbp).min()  # lowest low over lookback period lbp
 
     wr = -100 * (hh - close) / (hh - ll)
 
-    if fillna:
-        wr = wr.replace([np.inf, -np.inf], np.nan).fillna(-50)
-    return pd.Series(wr, name='wr')
+    return wr
+
+    # if fillna:
+    #     wr = wr.replace([np.inf, -np.inf], np.nan).fillna(-50)
+    # return pd.Series(wr, name='wr')
 
 
-def ao(high, low, s=5, l=34, fillna=False):
+def ao(high, low, short=5, long=34, fillna=False):
     """Awesome Oscillator
 
     From: https://www.tradingview.com/wiki/Awesome_Oscillator_(AO)
@@ -303,8 +316,8 @@ def ao(high, low, s=5, l=34, fillna=False):
     Args:
         high(pandas.Series): dataset 'High' column.
         low(pandas.Series): dataset 'Low' column.
-        s(int): short period
-        l(int): long period
+        short(int): short period
+        long(int): long period
         fillna(bool): if True, fill nan values with -50.
 
     Returns:
@@ -312,8 +325,9 @@ def ao(high, low, s=5, l=34, fillna=False):
     """
 
     mp = 0.5 * (high + low)
-    ao = mp.rolling(s).mean() - mp.rolling(l).mean()
+    ao = mp.rolling(short).mean() - mp.rolling(long).mean()
+    return ao
 
-    if fillna:
-        ao = ao.replace([np.inf, -np.inf], np.nan).fillna(0)
-    return pd.Series(ao, name='ao')
+    # if fillna:
+    #     ao = ao.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # return pd.Series(ao, name='ao')
